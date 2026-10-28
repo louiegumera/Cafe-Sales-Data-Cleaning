@@ -143,6 +143,136 @@ SET
 
 The author changed incorrect values in all columns that has missing and invalid entries including Item column, Payment_Method column, and Location column to maintain consistency in data. The author changed “ERROR”, “UNKNOWN”, null, and blank values into “NaN”. But the author changed “ERROR”, “UNKNOWN”, and blank values into NULL in the Transaction_Date column to ensure that the author will not face any errors in the future with the date format.
 
+```sql
+UPDATE sales_staging
+SET
+  Item =
+    CASE
+      WHEN Item = 'UNKNOWN' THEN 'NaN'
+      WHEN Item = 'ERROR' THEN 'NaN'
+      WHEN Item = '' THEN 'NaN'
+      WHEN Item IS NULL THEN 'NaN'
+    ELSE Item
+    END;
 
+UPDATE sales_staging
+SET
+  Payment_Method =
+    CASE
+      WHEN Payment_Method = 'UNKNOWN' THEN 'NaN'
+      WHEN Payment_Method = 'ERROR' THEN 'NaN'
+      WHEN Payment_Method = '' THEN 'NaN'
+      WHEN Payment_Method IS NULL THEN 'NaN'
+    ELSE Payment_Method
+    END;
 
+UPDATE sales_staging
+SET
+  Location =
+    CASE
+      WHEN Location = 'UNKNOWN' THEN 'NaN'
+      WHEN Location= 'ERROR' THEN 'NaN'
+      WHEN Location = '' THEN 'NaN'
+      WHEN Location IS NULL THEN 'NaN'
+    ELSE Location
+    END;
 
+UPDATE sales_staging
+SET
+  Transaction_Date =
+    CASE
+      WHEN Transaction_Date = 'UNKNOWN' THEN NULL
+      WHEN Transaction_Date= 'ERROR' THEN NULL
+      WHEN Transaction_Date = '' THEN NULL
+    ELSE Transaction_Date
+    END;
+```
+
+### Checking the Price_Per_Unit column
+
+The author wanted to make sure that the Price_Per_Unit column does not have inconsistencies. The author used Case statements to ensure that the data is accurate. The author did not find any incorrect price.
+
+```sql
+SELECT
+Transaction_ID, Item, Price_Per_Unit AS Price_On_Transaction,
+CASE
+  WHEN Item = 'Coffee' THEN 2
+  WHEN Item = 'Tea' THEN 1.5
+  WHEN Item = 'Sandwich' THEN 4
+  WHEN Item = 'Salad' THEN 5
+  WHEN Item = 'Cake' THEN 3
+  WHEN Item = 'Cookie' THEN 1
+  WHEN Item = 'Smoothie' THEN 4
+  WHEN Item = 'Juice' THEN 3
+END AS Expected_Price,
+  CASE
+    WHEN Price_Per_Unit =
+      CASE
+        WHEN Item = 'Coffee' THEN 2
+        WHEN Item = 'Tea' THEN 1.5
+        WHEN Item = 'Sandwich' THEN 4
+        WHEN Item = 'Salad' THEN 5
+        WHEN Item = 'Cake' THEN 3
+        WHEN Item = 'Cookie' THEN 1
+        WHEN Item = 'Smoothie' THEN 4
+        WHEN Item = 'Juice' THEN 3
+      END
+    THEN 'CORRECT'
+    ELSE 'INCORRECT'
+  END AS Price_Check
+FROM sales_staging;
+
+WITH Price_Checker AS (
+SELECT
+Transaction_ID, Item, Price_Per_Unit AS Price_On_Transaction,
+CASE
+WHEN Item = 'Coffee' THEN 2
+WHEN Item = 'Tea' THEN 1.5
+WHEN Item = 'Sandwich' THEN 4
+WHEN Item = 'Salad' THEN 5
+WHEN Item = 'Cake' THEN 3
+WHEN Item = 'Cookie' THEN 1
+WHEN Item = 'Smoothie' THEN 4
+WHEN Item = 'Juice' THEN 3
+END AS Expected_Price,
+CASE
+WHEN Price_Per_Unit =
+CASE
+WHEN Item = 'Coffee' THEN 2
+WHEN Item = 'Tea' THEN 1.5
+WHEN Item = 'Sandwich' THEN 4
+WHEN Item = 'Salad' THEN 5
+WHEN Item = 'Cake' THEN 3
+WHEN Item = 'Cookie' THEN 1
+WHEN Item = 'Smoothie' THEN 4
+WHEN Item = 'Juice' THEN 3
+END
+THEN 'CORRECT'
+ELSE 'INCORRECT'
+END AS Price_Check
+FROM sales_staging)
+SELECT COUNT(Price_Check) AS INCORRECT_COUNT
+FROM Price_Checker
+WHERE Price_Check = 'INCORRECT'
+AND Item != 'NaN';
+```
+
+### Fixing the date format
+
+The author fixed the date format to ensure that all date values follow a consistent and valid format.
+
+```sql
+UPDATE sales_staging
+SET Transaction_Date = STR_TO_DATE(Transaction_Date, '%Y-%m-%d');
+```
+
+### Standardizing datatype
+
+The author changed the datatype of dates to ensure that the Transaction_Date column stores values using the appropriate and consistent datatype.
+
+```sql
+ALTER TABLE sales_staging
+MODIFY COLUMN Transaction_Date DATE;
+```
+
+*Thank you for visiting my portfolio!*
