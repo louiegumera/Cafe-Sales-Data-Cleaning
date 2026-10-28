@@ -70,10 +70,13 @@ consistent.
 ```sql
 UPDATE sales_staging
 SET Transaction_ID = TRIM(Transaction_ID);
+
 UPDATE sales_staging
 SET Item = TRIM(Item);
+
 UPDATE sales_staging
 SET Payment_Method = TRIM(Payment_Method);
+
 UPDATE sales_staging
 SET Location = TRIM(Location);
 ```
@@ -85,8 +88,10 @@ Identifying misspellings finds and correct incorrectly spelled values so that th
 ```sql
 SELECT DISTINCT Item
 FROM sales_staging;
+
 SELECT DISTINCT Payment_Method
 FROM sales_staging;
+
 SELECT DISTINCT Location
 FROM sales_staging;
 ```
@@ -97,23 +102,23 @@ The author identified missing and invalid entries finds incomplete or incorrect 
 
 ```sql
 SELECT
-SUM(Transaction_ID IS NULL OR Transaction_ID = '' OR Transaction_ID =
-'UNKNOWN' OR Transaction_ID = 'ERROR') AS Transaction_ID_Missing,
-SUM(Item IS NULL OR Item = '' OR Item = 'UNKNOWN' OR Item = 'ERROR')
-AS Item_Missing,
-SUM(Quantity IS NULL OR Quantity = '' OR Quantity = 'UNKNOWN' OR
-Quantity = 'ERROR') AS Quantity_Missing,
-SUM(Price_Per_Unit IS NULL OR Price_Per_Unit = '' OR Price_Per_Unit =
-'UNKNOWN' OR Price_Per_Unit = 'ERROR') AS Price_Per_Unit_Missing,
-SUM(Total_Spent IS NULL OR Total_Spent = '' OR Total_Spent = 'UNKNOWN'
-OR Total_Spent = 'ERROR') AS Total_Spent_Missing,
-SUM(Payment_Method IS NULL OR Payment_Method = '' OR Payment_Method =
-'UNKNOWN' OR Payment_Method = 'ERROR') AS Payment_Method_Missing,
-SUM(Location IS NULL OR Location = '' OR Location = 'UNKNOWN' OR
-Location = 'ERROR') AS Location_Missing,
-SUM(Transaction_Date IS NULL OR Transaction_Date = '' OR
-Transaction_Date = 'UNKNOWN' OR Transaction_Date = 'ERROR') AS
-Transaction_Date_Missing
+  SUM(Transaction_ID IS NULL OR Transaction_ID = '' OR Transaction_ID =
+  'UNKNOWN' OR Transaction_ID = 'ERROR') AS Transaction_ID_Missing,
+  SUM(Item IS NULL OR Item = '' OR Item = 'UNKNOWN' OR Item = 'ERROR')
+  AS Item_Missing,
+  SUM(Quantity IS NULL OR Quantity = '' OR Quantity = 'UNKNOWN' OR
+  Quantity = 'ERROR') AS Quantity_Missing,
+  SUM(Price_Per_Unit IS NULL OR Price_Per_Unit = '' OR Price_Per_Unit =
+  'UNKNOWN' OR Price_Per_Unit = 'ERROR') AS Price_Per_Unit_Missing,
+  SUM(Total_Spent IS NULL OR Total_Spent = '' OR Total_Spent = 'UNKNOWN'
+  OR Total_Spent = 'ERROR') AS Total_Spent_Missing,
+  SUM(Payment_Method IS NULL OR Payment_Method = '' OR Payment_Method =
+  'UNKNOWN' OR Payment_Method = 'ERROR') AS Payment_Method_Missing,
+  SUM(Location IS NULL OR Location = '' OR Location = 'UNKNOWN' OR
+  Location = 'ERROR') AS Location_Missing,
+  SUM(Transaction_Date IS NULL OR Transaction_Date = '' OR
+  Transaction_Date = 'UNKNOWN' OR Transaction_Date = 'ERROR') AS
+  Transaction_Date_Missing
 FROM sales_staging;
 ```
 
