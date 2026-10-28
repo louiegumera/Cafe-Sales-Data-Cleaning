@@ -102,23 +102,47 @@ The author identified missing and invalid entries finds incomplete or incorrect 
 
 ```sql
 SELECT
-  SUM(Transaction_ID IS NULL OR Transaction_ID = '' OR Transaction_ID =
-  'UNKNOWN' OR Transaction_ID = 'ERROR') AS Transaction_ID_Missing,
-  SUM(Item IS NULL OR Item = '' OR Item = 'UNKNOWN' OR Item = 'ERROR')
-  AS Item_Missing,
-  SUM(Quantity IS NULL OR Quantity = '' OR Quantity = 'UNKNOWN' OR
-  Quantity = 'ERROR') AS Quantity_Missing,
-  SUM(Price_Per_Unit IS NULL OR Price_Per_Unit = '' OR Price_Per_Unit =
-  'UNKNOWN' OR Price_Per_Unit = 'ERROR') AS Price_Per_Unit_Missing,
-  SUM(Total_Spent IS NULL OR Total_Spent = '' OR Total_Spent = 'UNKNOWN'
-  OR Total_Spent = 'ERROR') AS Total_Spent_Missing,
-  SUM(Payment_Method IS NULL OR Payment_Method = '' OR Payment_Method =
-  'UNKNOWN' OR Payment_Method = 'ERROR') AS Payment_Method_Missing,
-  SUM(Location IS NULL OR Location = '' OR Location = 'UNKNOWN' OR
-  Location = 'ERROR') AS Location_Missing,
-  SUM(Transaction_Date IS NULL OR Transaction_Date = '' OR
-  Transaction_Date = 'UNKNOWN' OR Transaction_Date = 'ERROR') AS
-  Transaction_Date_Missing
+SUM(Transaction_ID IS NULL OR Transaction_ID = '' OR Transaction_ID =
+'UNKNOWN' OR Transaction_ID = 'ERROR') AS Transaction_ID_Missing,
+SUM(Item IS NULL OR Item = '' OR Item = 'UNKNOWN' OR Item = 'ERROR')
+AS Item_Missing,
+SUM(Quantity IS NULL OR Quantity = '' OR Quantity = 'UNKNOWN' OR
+Quantity = 'ERROR') AS Quantity_Missing,
+SUM(Price_Per_Unit IS NULL OR Price_Per_Unit = '' OR Price_Per_Unit =
+'UNKNOWN' OR Price_Per_Unit = 'ERROR') AS Price_Per_Unit_Missing,
+SUM(Total_Spent IS NULL OR Total_Spent = '' OR Total_Spent = 'UNKNOWN'
+OR Total_Spent = 'ERROR') AS Total_Spent_Missing,
+SUM(Payment_Method IS NULL OR Payment_Method = '' OR Payment_Method =
+'UNKNOWN' OR Payment_Method = 'ERROR') AS Payment_Method_Missing,
+SUM(Location IS NULL OR Location = '' OR Location = 'UNKNOWN' OR
+Location = 'ERROR') AS Location_Missing,
+SUM(Transaction_Date IS NULL OR Transaction_Date = '' OR
+Transaction_Date = 'UNKNOWN' OR Transaction_Date = 'ERROR') AS
+Transaction_Date_Missing
 FROM sales_staging;
 ```
+
+### Changing incorrect values
+
+The author changed incorrect values in Item column including the blank values and null. Given that the price for each item is given, the author makes use of it to fix the incorrect and blank values including null using Case statement.
+
+```sql
+UPDATE sales_staging
+SET
+  Item =
+    CASE
+      WHEN Price_Per_Unit = 2 THEN 'Coffee'
+      WHEN Price_Per_Unit = 1.5 THEN 'Tea'
+      WHEN Price_Per_Unit = 5 THEN 'Salad'
+      WHEN Price_Per_Unit = 1 THEN 'Cookie'
+    ELSE Item
+    END;
+```
+
+### Changing incorrect values
+
+The author changed incorrect values in all columns that has missing and invalid entries including Item column, Payment_Method column, and Location column to maintain consistency in data. The author changed “ERROR”, “UNKNOWN”, null, and blank values into “NaN”. But the author changed “ERROR”, “UNKNOWN”, and blank values into NULL in the Transaction_Date column to ensure that the author will not face any errors in the future with the date format.
+
+
+
 
